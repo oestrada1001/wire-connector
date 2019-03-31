@@ -84,11 +84,84 @@ class WireConnector extends WireConnectorShareable {
      */
     public function admin_menu_page()
     {
-        $wire_connector_page = add_menu_page('Wire Connector Plugin', 'Wire Connector', 'administrator', 'main_wc_page', array($this,'main_wc_page'), 'dashicons-editor-expand', 3);
-
+        $wire_connector_main = add_menu_page('Wire Connector Plugin', 'Wire Connector', 'administrator', 'main_wc_page', array($this,'main_wc_page'), 'dashicons-editor-expand', 3);
+        $wire_connector_mail = add_submenu_page('main_wc_page', 'Mail Settings', 'Mail Settings', 'administrator', 'mail_wc_page', array($this, 'mail_wc_page'));
+        $wire_connector_goal = add_submenu_page('main_wc_page', 'Goal Settings', 'Goal Settings', 'administrator', 'goal_wc_page', array($this, 'goal_wc_page'));
+        $wire_connector_page =add_submenu_page('main_wc_page', 'Wire Connector Configuration', 'Configuration', 'administrator', 'page_wc_page', array($this, 'page_wc_page'));
+        add_action( 'load-' . $wire_connector_main, array($this,'add_javascript'));
+        add_action( 'load-' . $wire_connector_mail, array($this,'add_javascript'));
+        add_action( 'load-' . $wire_connector_goal, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_page, array($this,'add_javascript'));
+        add_action( 'load-' . $wire_connector_main, array($this,'add_bootstrap'));
+        add_action( 'load-' . $wire_connector_mail, array($this,'add_bootstrap'));
+        add_action( 'load-' . $wire_connector_goal, array($this,'add_bootstrap'));
         add_action( 'load-' . $wire_connector_page, array($this,'add_bootstrap'));
 
+
+    }
+
+    private function customize_pages()
+    {
+        echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">';
+    }
+
+    public function page_wc_page()
+    {
+        $admin_url = $this->admin_url();
+
+        $this->customize_pages();
+
+        echo "<div class='wrap'>";
+        ?>
+            <h1 style="text-align:center;">Wire Connector Configurations</h1>
+            <p style="font-size:16px">This page will be used to create dynamic links for your subscribers.</p>
+            <em style="font-size:14px"><b>User Profile Example:</b>www.yoursite.com/page-name/?id=X&list=XXXXX&sub=XXXXXXXXXXXXXX</em>
+            <br>
+            <em style="font-size:14px"><b>Referred User Example:</b>www.yoursite.com/page-name/?list=XXXXX&sub=XXXXXXXXXXXXXX</em>
+
+        <?php
+        echo "<form method='post' action='$admin_url'>";
+        settings_fields('wire_connector_pages');
+        echo "<input type='hidden' name='action' value='submit-form'>";
+        do_settings_sections('page_wc_page');
+
+        submit_button();
+        echo "</div>";
+    }
+
+    public function goal_wc_page()
+    {
+        $admin_url = $this->admin_url();
+
+        echo "<div class='wrap'>";
+        $this->customize_pages();
+        echo "<h1 style=\"text-align:center;\">Goal and Prizes Configuration</h1>";
+        echo "<form method='post' action='$admin_url'>";
+        settings_fields('wire_connector_goals');
+        settings_fields('wire_connector_prizes');
+        echo "<input type='hidden' name='action' value='submit-form'>";
+        do_settings_sections('goal_wc_page');
+
+        submit_button();
+        echo '</div>';
+    }
+
+    public function mail_wc_page()
+    {
+        $admin_url = $this->admin_url();
+
+        echo "<div class='wrap'>";
+        $this->customize_pages();
+        echo "<h1 style=\"text-align:center;\">Email Configuration</h1>";
+        echo "<p style=\"text-align:center;\">This is the email that will be notificed once the subscribers accomplish a goal.</p>";
+        echo "<form method='post' action='$admin_url'>";
+        settings_fields('wire_connector_email');
+        echo "<input type='hidden' name='action' value='submit-form'>";
+        do_settings_sections('mail_wc_page');
+
+        submit_button('Test Email');
+        submit_button();
+        echo "</div>";
     }
 
 
@@ -268,16 +341,6 @@ class WireConnector extends WireConnectorShareable {
             //$subscriberEmail = $mailchimp_api->retrieveMemberData($subscriberLink, 'email_address');
 
             //Insert Mail Notification
-            try{
-                /*$to = get_option('AdminEmail');
-                $subject = 'A subscriber just reach a goal!';
-                $body = "$subscriberEmail has reached the goal you set as $goalSet";
-                $headers = array('Content-Type: text/html; charset=UTF-8');
-
-                wp_mail( $to, $subject, $body, $headers );*/
-            }catch(Exception $e){
-
-            }
 
             echo 'Email Sent';
         }
@@ -299,6 +362,8 @@ class WireConnector extends WireConnectorShareable {
 
         $admin_url = admin_url('?page=main_wc_page');
 
+        $this->test_email($_POST);
+
         $data = $this->dynamic_post_goal_setter();
 
         $data = $this->create_new_pages($data);
@@ -314,6 +379,40 @@ class WireConnector extends WireConnectorShareable {
 
         wp_redirect($admin_url);
 
+    }
+
+    private function test_email($post)
+    {
+        if($post['submit'] == 'Test Email'){
+
+            if($_POST['adminEmail'] == null){
+
+                $_POST['adminEmail'] = get_option('AdminEmail');
+
+            }
+            $this->send_email('Test', $_POST['adminEmail']);
+
+        }
+
+    }
+
+    private function send_email($type, $testEmail = null)
+    {
+        if($type == 'Test'){
+            $to = $testEmail;
+            $subject = 'Test Message';
+            $body = 'This is a test message.';
+            $headers = array('Content-Type: text/html; charset=UTF-8');
+
+            wp_mail( $to, $subject, $body, $headers );
+        }else{
+            $to = get_option('AdminEmail');
+            $subject = 'A subscriber just reach a goal!';
+            $body = "$subscriberEmail has reached the goal you set as $goalSet";
+            $headers = array('Content-Type: text/html; charset=UTF-8');
+
+            wp_mail( $to, $subject, $body, $headers );
+        }
     }
 
     private function create_new_pages($data)
@@ -480,6 +579,16 @@ class WireConnector extends WireConnectorShareable {
         $pageName = get_option('PageName');
         $listName = get_option('ListName');
         $clientPageName = get_option('ClientPageName');
+        $adminEmail = get_option('AdminEmail');
+
+        $firstGoal = get_option('FirstGoal');
+        $secondGoal = get_option('SecondGoal');
+        $thirdGoal = get_option('ThirdGoal');
+        $fourthGoal = get_option('FourthGoal');
+        $firstPrize = get_option('FirstPrize');
+        $secondPrize = get_option('SecondPrize');
+        $thirdPrize = get_option('ThirdPrize');
+        $fourthPrize = get_option('FourthPrize');
 
         $mailchimp_api = static::mailchimp_methods();
         $listIDs = $mailchimp_api->getListID();
@@ -509,129 +618,30 @@ class WireConnector extends WireConnectorShareable {
         <div class="wrap">
             <?php
 
-            echo "<form method='post' action='$admin_url'>";
-                settings_fields('wire_connector_pages');
-                settings_fields('wire_connector_goals');
-            echo "<input type='hidden' name='action' value='submit-form'>";
-                do_settings_sections('main_wc_page');
-
-
-                submit_button();
-
-                echo "</form>";
-
              if(empty($pageName)){  ?>
-                <h1 style="text-align:center;">Wire Connector</h1>
-                <br>
-                <p style="font-size:16px">This page will be used to create dynamic links for your subscribers.</p>
-                <em style="font-size:14px"><b>User Profile Example:</b>www.yoursite.com/page-name/?id=X&list=XXXXX&sub=XXXXXXXXXXXXXX</em>
-                <br>
-                <em style="font-size:14px"><b>New Subscriber Example:</b>www.yoursite.com/page-name/?list=XXXXX&sub=XXXXXXXXXXXXXX</em>
-                <br>
-                <br>
-                <form class="form-inline" action="<?php echo $admin_url; ?>" method="post">
+                <h1 style="text-align:center;">Welcome to Wire Connector</h1>
+                 <br>
+                 <p style="font-size:16px;">In order to start using Wire Connector you have to do the following things under the Wire Connector Tab:</p>
+                 <ol>
+                     <li>Configuration: Pick the Mailchimp list you are going to apply Wire Connector on and create names for the pages your subscribers will need.</li>
+                     <li>Goal Settings: Set up to 4 goals for your subscribers. Don't forget to set the prizes as well. ;D</li>
+                     <li>Mail Settings: Set the email you want to be notified to once your subscribers start hitting their goals.</li>
+                 </ol>
 
-                    <input type="hidden" name="formName" value="createPage">
-                    <input type="hidden" name="action" value="submit-form">
 
-                    <div class="form-group mb-2">
-                        <label for="page">User Profile Page:</label>
-                    </div>
+            <?php }?>
 
-                    <div class="form-group mx-sm-3 mb-2">
-                        <input class="form-control" name="pageName" type="text">
-                    </div>
+            <h1>Current Configurations</h1>
+            <p><span>Page Name:</span> <?php echo $pageName; ?></p>
+            <p><span>Referred Page Name:</span> <?php echo $clientPageName; ?></p>
+            <p><span>Mailchimp Name:</span> <?php echo $listName; ?></p>
+            <p><span>Admin Email:</span> <?php echo $adminEmail; ?></p>
 
-                    <div class="form-group mb-2">
-                        <label for="page">New Subscriber Page:</label>
-                    </div>
-
-                    <div class="form-group mx-sm-3 mb-2">
-                        <input class="form-control" name="clientPageName" type="text">
-                    </div>
-
-                    <div class="form-group mb-2">
-                        <button id="pageName" class="btn btn-success">Create Pages</button>
-                    </div>
-                </form>
-            <?php }elseif(empty($listName)){ ?>
-
-                <form action="<?php echo $admin_url; ?>" method="post" class="col-5">
-                    <div class="form-group">
-                        <h1 style="text-align:center;">Wire Connector</h1>
-                        <p style="text-align:center;">Next, select the list you want to apply Wire Connector to.</p>
-                    </div>
-
-                    <input type="hidden" name="formName" value="startWireConnector">
-                    <input type="hidden" name="action" value="submit-form">
-
-                    <div class="form-group">
-                        <label for="listID">Select List</label>
-                        <select name="listID" class="custom-select" required>
-                            <option value="">Choose Option</option>
-                            <?php foreach($listIDs as $listArray => $listName){
-                                foreach($listName as $list => $listKey){ ?>
-                                    <option value="<?php echo $listArray.','.$listKey; ?>"><?php echo $listArray; ?></option>
-                                <?php   }
-                            } ?>
-
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="totalSet">Set Referral Goal</label>
-                        <input type="number" class="form-control" name="totalSet">
-                    </div>
-
-                    <div class="form-group">
-                        <lable for="prizeSet">Set the Prize</lable>
-                        <input type="text" class="form-control" name="prizeSet">
-                    </div>
-
-                    <button class="btn btn-success" value="submit">Start Wire Connector</button>
-                </form>
-            <?php }else{ ?>
-
-                <h1 class="text-center"><?php echo $listName ?> - <?php echo $pageName; ?></h1>
-
-                <!--<form action="<?php echo $admin_url; ?>" method="post">
-                <input type="hidden" name="action" value="submit-form">
-                <input type="hidden" name="formName" value="resetMergeFields">
-                <div class="form-group">
-                    <button class="btn btn-danger">Reset Merge Fields</button>
-                </div>
-
-            </form>
-
-            <form action="<?php echo $admin_url; ?>" method="post">
-                <input type="hidden" name="action" value="submit-form">
-                <input type="hidden" name="formName" value="deleteMergeFields">
-                <div class="form-group">
-                    <button class="btn btn-danger">Delete Merge Fields</button>
-                </div>
-            </form>-->
-
-                <h3>Wire Connector has been successfully setup.</h3>
-
-            <?php
-
-            }
-
-            /*if(is_null(get_option('first_goal'))){*/
-
-              /*  settings_errors();
-                echo "<form method='post' action='options.php'>";
-                settings_fields('wire_connector_goals');
-
-                do_settings_sections('main_wc_page');
-
-                submit_button();
-
-                echo "</form>";*/
-
-            /*}*/
-
-            ?>
+            <h1>Goals and Prizes</h1>
+            <p><span>1st Goal: <?php echo $firstGoal; ?></span> - Prize: <?php echo $firstPrize; ?></p>
+            <p><span>2nd Goal: <?php echo $secondGoal; ?></span> - Prize: <?php echo $secondPrize; ?></p>
+            <p><span>3rd Goal: <?php echo $thirdGoal; ?></span> - Prize: <?php echo $thirdPrize; ?></p>
+            <p><span>4th Goal: <?php echo $fourthGoal; ?></span> - Prize: <?php echo $fourthPrize; ?></p>
 
         </div>
 
