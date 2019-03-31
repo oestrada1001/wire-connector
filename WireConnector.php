@@ -87,16 +87,15 @@ class WireConnector extends WireConnectorShareable {
         $wire_connector_main = add_menu_page('Wire Connector Plugin', 'Wire Connector', 'administrator', 'main_wc_page', array($this,'main_wc_page'), 'dashicons-editor-expand', 3);
         $wire_connector_mail = add_submenu_page('main_wc_page', 'Mail Settings', 'Mail Settings', 'administrator', 'mail_wc_page', array($this, 'mail_wc_page'));
         $wire_connector_goal = add_submenu_page('main_wc_page', 'Goal Settings', 'Goal Settings', 'administrator', 'goal_wc_page', array($this, 'goal_wc_page'));
-        $wire_connector_page =add_submenu_page('main_wc_page', 'Wire Connector Configuration', 'Configuration', 'administrator', 'page_wc_page', array($this, 'page_wc_page'));
-        add_action( 'load-' . $wire_connector_main, array($this,'add_javascript'));
+        $wire_connector_page = add_submenu_page('main_wc_page', 'Wire Connector Configuration', 'Configuration', 'administrator', 'page_wc_page', array($this, 'page_wc_page'));
+        /*add_action( 'load-' . $wire_connector_main, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_mail, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_goal, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_page, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_main, array($this,'add_bootstrap'));
         add_action( 'load-' . $wire_connector_mail, array($this,'add_bootstrap'));
         add_action( 'load-' . $wire_connector_goal, array($this,'add_bootstrap'));
-        add_action( 'load-' . $wire_connector_page, array($this,'add_bootstrap'));
-
+        add_action( 'load-' . $wire_connector_page, array($this,'add_bootstrap'));*/
 
     }
 
