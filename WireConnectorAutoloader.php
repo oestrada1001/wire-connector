@@ -10,7 +10,7 @@ function WireConnectorRequiredClasses()
 
     //Dependencies Loaded Manually
     require_once $plugin_path . 'includes/MailChimp.php';
-    require_once plugin_dir_path(__DIR__) . '/wordpress-mailchimp-framework-master/mailchimp-framework.php';
+    require_once $plugin_path . 'includes/mailchimp-framework.php';
     require_once $plugin_path . 'WireConnectorShareable.php';
 
     $plugin_path = $plugin_path . 'WireConnectorClasses/';
