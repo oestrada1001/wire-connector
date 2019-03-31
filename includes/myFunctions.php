@@ -13,13 +13,13 @@ function wc_register_settings(){
 }
 
 
-function add_javascript(){
+/*function add_javascript(){
 	wp_enqueue_script( 'wc_wire_javascript', plugins_url('js/wc_wire_javascript.js', __FILE__ ), array('jquery'), null, true );
 }
 
 function add_bootstrap(){
 	wp_enqueue_script( 'wc_wire_bootstrap', plugins_url('css/wc_wire_bootstrap.css', __FILE__ ), array('bootstrap'), null, true);
-}
+}*/
 
 function wc_main_page(){
 	?>
