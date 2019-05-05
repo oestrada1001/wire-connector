@@ -88,14 +88,14 @@ class WireConnector extends WireConnectorShareable {
         $wire_connector_mail = add_submenu_page('main_wc_page', 'Mail Settings', 'Mail Settings', 'administrator', 'mail_wc_page', array($this, 'mail_wc_page'));
         $wire_connector_goal = add_submenu_page('main_wc_page', 'Goal Settings', 'Goal Settings', 'administrator', 'goal_wc_page', array($this, 'goal_wc_page'));
         $wire_connector_page = add_submenu_page('main_wc_page', 'Wire Connector Configuration', 'Configuration', 'administrator', 'page_wc_page', array($this, 'page_wc_page'));
-        add_action( 'load-' . $wire_connector_main, array($this,'add_javascript'));
+        /*add_action( 'load-' . $wire_connector_main, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_mail, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_goal, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_page, array($this,'add_javascript'));
         add_action( 'load-' . $wire_connector_main, array($this,'add_bootstrap'));
         add_action( 'load-' . $wire_connector_mail, array($this,'add_bootstrap'));
         add_action( 'load-' . $wire_connector_goal, array($this,'add_bootstrap'));
-        add_action( 'load-' . $wire_connector_page, array($this,'add_bootstrap'));
+        add_action( 'load-' . $wire_connector_page, array($this,'add_bootstrap'));*/
 
     }
 
@@ -506,12 +506,12 @@ class WireConnector extends WireConnectorShareable {
 
     public function add_javascript()
     {
-        wp_enqueue_script( 'wc_wire_javascript', plugins_url('includes/js/bootstrap.min.js', __FILE__ ), array('jquery'), null, true );
+        //wp_enqueue_script( 'wc_wire_javascript', plugins_url('includes/js/bootstrap.min.js', __FILE__ ), array('jquery'), null, true );
     }
 
     public function add_bootstrap()
     {
-        wp_enqueue_script( 'wc_wire_bootstrap', plugins_url('includes/css/bootstrap.min.css', __FILE__ ), array('bootstrap'), null, true);
+        //wp_enqueue_script( 'wc_wire_bootstrap', plugins_url('includes/css/bootstrap.min.css', __FILE__ ), array('bootstrap'), null, true);
     }
 
     /**
