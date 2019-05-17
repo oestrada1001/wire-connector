@@ -14,14 +14,13 @@ class WireConnectorShortcodes extends WireConnectorShareable {
         add_shortcode('subscriber_percentage', array($this,'subscriber_percentage_shortcode'));
         add_shortcode('subscriber_difference', array($this,'subscriber_difference_shortcode'));
         add_shortcode('subscriber_email', array($this,'subscriber_email_shortcode'));
-        add_shortcode('first_goal', array($this,'first_goal_shortcode'));
         add_shortcode('merge_field', array($this,'merge_field_shortcode'));
         add_shortcode('goal', array($this, 'goal_shortcode'));
     }
 
     public function verify_subscriber($id, $list, $sub)
     {
-        if(!is_admin()){
+        if(!current_user_can('edit_pages')){
 
             $WireConnector = new WireConnector();
 
@@ -29,7 +28,6 @@ class WireConnectorShortcodes extends WireConnectorShareable {
             $list_verification = $mailchimp_api->get('lists/'.$list);
 
             $userExist = $mailchimp_api->get('lists/'.$list.'/members/'.$sub);
-
 
             if($list_verification['id'] != $list || $userExist['status'] == 404){
 

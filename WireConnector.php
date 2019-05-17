@@ -47,6 +47,7 @@ class WireConnector extends WireConnectorShareable {
         add_action('admin_menu', array($this,'admin_menu_page'));
         add_filter('query_vars', array($this, 'add_query_variables'));
         register_activation_hook( __FILE__, array($this,'create_wire_connector_page'));
+        add_action('admin_enqueue_scripts', array($this, 'add_scripts'));
         add_action('admin_post_nopriv_submit-form', 'public_form_action'); // If the user in not logged in
         add_action('admin_post_submit-form', 'private_form_action'); // If the user is logged in
         add_filter('wp_kses_allowed_html', function ($allowedposttags, $context){
@@ -84,19 +85,10 @@ class WireConnector extends WireConnectorShareable {
      */
     public function admin_menu_page()
     {
-        $wire_connector_main = add_menu_page('Wire Connector Plugin', 'Wire Connector', 'administrator', 'main_wc_page', array($this,'main_wc_page'), 'dashicons-editor-expand', 3);
-        $wire_connector_mail = add_submenu_page('main_wc_page', 'Mail Settings', 'Mail Settings', 'administrator', 'mail_wc_page', array($this, 'mail_wc_page'));
-        $wire_connector_goal = add_submenu_page('main_wc_page', 'Goal Settings', 'Goal Settings', 'administrator', 'goal_wc_page', array($this, 'goal_wc_page'));
-        $wire_connector_page = add_submenu_page('main_wc_page', 'Wire Connector Configuration', 'Configuration', 'administrator', 'page_wc_page', array($this, 'page_wc_page'));
-        /*add_action( 'load-' . $wire_connector_main, array($this,'add_javascript'));
-        add_action( 'load-' . $wire_connector_mail, array($this,'add_javascript'));
-        add_action( 'load-' . $wire_connector_goal, array($this,'add_javascript'));
-        add_action( 'load-' . $wire_connector_page, array($this,'add_javascript'));
-        add_action( 'load-' . $wire_connector_main, array($this,'add_bootstrap'));
-        add_action( 'load-' . $wire_connector_mail, array($this,'add_bootstrap'));
-        add_action( 'load-' . $wire_connector_goal, array($this,'add_bootstrap'));
-        add_action( 'load-' . $wire_connector_page, array($this,'add_bootstrap'));*/
-
+        add_menu_page('Wire Connector Plugin', 'Wire Connector', 'administrator', 'main_wc_page', array($this,'main_wc_page'), 'dashicons-editor-expand', 3);
+        add_submenu_page('main_wc_page', 'Mail Settings', 'Mail Settings', 'administrator', 'mail_wc_page', array($this, 'mail_wc_page'));
+        add_submenu_page('main_wc_page', 'Goal Settings', 'Goal Settings', 'administrator', 'goal_wc_page', array($this, 'goal_wc_page'));
+        add_submenu_page('main_wc_page', 'Wire Connector Configuration', 'Configuration', 'administrator', 'page_wc_page', array($this, 'page_wc_page'));
     }
 
     private function customize_pages()
@@ -140,7 +132,6 @@ class WireConnector extends WireConnectorShareable {
         settings_fields('wire_connector_prizes');
         echo "<input type='hidden' name='action' value='submit-form'>";
         do_settings_sections('goal_wc_page');
-
         submit_button();
         echo '</div>';
     }
@@ -341,6 +332,7 @@ class WireConnector extends WireConnectorShareable {
 
             //Insert Mail Notification
 
+
             echo 'Email Sent';
         }
 
@@ -504,14 +496,15 @@ class WireConnector extends WireConnectorShareable {
     }
 
 
-    public function add_javascript()
+    public function add_scripts($hook)
     {
-        //wp_enqueue_script( 'wc_wire_javascript', plugins_url('includes/js/bootstrap.min.js', __FILE__ ), array('jquery'), null, true );
-    }
+        if( $hook != 'admin.php'){
+            return;
+        }
 
-    public function add_bootstrap()
-    {
-        //wp_enqueue_script( 'wc_wire_bootstrap', plugins_url('includes/css/bootstrap.min.css', __FILE__ ), array('bootstrap'), null, true);
+        wp_enqueue_script( 'bootstrap-js', plugins_url( 'wire-connector/includes/js/bootstrap.js' , dirname(__FILE__) ) );
+        wp_enqueue_script( 'bootstrap-css', plugins_url( 'wire-connector/includes/css/bootstrap.css' , dirname(__FILE__) ) );
+        wp_enqueue_script( 'wire-connector-js', plugins_url( 'wire-connector/includes/js/wire-connector.js' , dirname(__FILE__) ) );
     }
 
     /**
