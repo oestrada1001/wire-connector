@@ -17,6 +17,7 @@ class WireConnectorShortcodes extends WireConnectorShareable {
         add_shortcode('merge_field', array($this,'merge_field_shortcode'));
         add_shortcode('post_submit', array($this,'post_submit_shortcode'));
         add_shortcode('goal', array($this, 'goal_shortcode'));
+        add_shortcode('prize', array($this, 'prize_shortcode'));
     }
 
     public function post_submit_shortcode()
@@ -241,6 +242,127 @@ class WireConnectorShortcodes extends WireConnectorShareable {
                 case '4':
                 case 4:
                     $number = 'FourthGoal';
+                    return $number;
+                    break;
+                case 'fifth':
+                case '5':
+                case 5:
+                    $number = 'FifthGoal';
+                    return $number;
+                    break;
+                case 'sixth':
+                case '6':
+                case 6:
+                    $number = 'SixthGoal';
+                    return $number;
+                    break;
+                case 'seventh':
+                case '7':
+                case 7:
+                    $number = 'SeventhGoal';
+                    return $number;
+                    break;
+                case 'eight':
+                case '8':
+                case 8:
+                    $number = 'EightGoal';
+                    return $number;
+                    break;
+                case 'ninth':
+                case '9':
+                case 9:
+                    $number = 'NinthGoal';
+                    return $number;
+                    break;
+                default:
+                    $number = 'Invalid';
+
+            }
+
+            if($number == 'Invalid'){
+                $invalid = 'Invalid Input: Please use a number.';
+                return $invalid;
+            }
+
+            $number = get_option($number);
+
+            return $number;
+
+        }
+    }
+
+    public function prize_shortcode( $attr = '')
+    {
+        $get = array('id' => get_query_var('id'),
+            'sub' => get_query_var('sub'),
+            'list' => get_query_var('list')
+        );
+
+        if(!empty($get)){
+            $this->verify_subscriber($get['id'], $get['list'], $get['sub']);
+        }
+
+        $mailchimp_api = WireConnector::mailchimp_methods();
+
+        if(!empty($get['sub']) && !empty($get['list'])){
+
+            $prize = shortcode_atts( array(
+                'number' => 'Please include Prize Number.'
+            ), $attr);
+
+            $prizeNumber = strtolower($prize['number']);
+
+            switch($prizeNumber){
+                case 'one':
+                case '1':
+                case 1:
+                    $number = 'FirstPrize';
+                    break;
+                case 'two':
+                case '2':
+                case 2:
+                    $number = 'SecondPrize';
+                    break;
+                case 'three':
+                case '3':
+                case 3:
+                    $number = 'ThirdPrize';
+                    return $number;
+                    break;
+                case 'fourth':
+                case '4':
+                case 4:
+                    $number = 'FourthPrize';
+                    return $number;
+                    break;
+                case 'fifth':
+                case '5':
+                case 5:
+                    $number = 'FifthPrize';
+                    return $number;
+                    break;
+                case 'sixth':
+                case '6':
+                case 6:
+                    $number = 'SixthPrize';
+                    return $number;
+                    break;
+                case 'seventh':
+                case '7':
+                case 7:
+                    $number = 'SeventhPrize';
+                    return $number;
+                    break;
+                case 'eight':
+                case '8':
+                case 8:
+                    $number = 'EightPrize';
+                    return $number;
+                    break;
+                case 'ninth':
+                case '9':
+                case 9:
+                    $number = 'NinthPrize';
                     return $number;
                     break;
                 default:

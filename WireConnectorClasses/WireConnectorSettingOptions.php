@@ -32,6 +32,13 @@ Class WireConnectorSettingOptions{
         register_setting('wire_connector_prizes','ThirdPrize');
         register_setting('wire_connector_prizes','FourthPrize');
 
+        register_setting('wire_connector_prizes','FifthPrize');
+        register_setting('wire_connector_prizes','SixthPrize');
+        register_setting('wire_connector_prizes','SeventhPrize');
+        register_setting('wire_connector_prizes','EightPrize');
+        register_setting('wire_connector_prizes','NinthPrize');
+
+
         add_settings_section('wc_prizes', 'Wire Connector Prizes', array($this,'wc_prizes_settings'), 'goal_wc_page');
     }
 
@@ -41,6 +48,12 @@ Class WireConnectorSettingOptions{
         $secondPrize = esc_attr(get_option('SecondPrize'));
         $thirdPrize = esc_attr(get_option('ThirdPrize'));
         $fourthPrize = esc_attr(get_option('FourthPrize'));
+
+        $fifthPrize = esc_attr(get_option('FifthPrize'));
+        $sixthPrize = esc_attr(get_option('SixthPrize'));
+        $seventhPrize = esc_attr(get_option('SeventhPrize'));
+        $eightPrize = esc_attr(get_option('EightPrize'));
+        $ninthPrize = esc_attr(get_option('NinthPrize'));
 
         ?>
         <label for='firstPrize'>First Prize:</label>
@@ -54,6 +67,21 @@ Class WireConnectorSettingOptions{
         <br>
         <label for='forthPrize'>Fourth Prize:</label>
         <input type='text' name='fourthPrize' placeholder='<?php echo $fourthPrize; ?>'>
+        <br>
+        <label for='forthPrize'>Fifth Prize:</label>
+        <input type='text' name='fifthPrize' placeholder='<?php echo $fifthPrize; ?>'>
+        <br>
+        <label for='forthPrize'>Sixth Prize:</label>
+        <input type='text' name='sixthPrize' placeholder='<?php echo $sixthPrize; ?>'>
+        <br>
+        <label for='forthPrize'>Seventh Prize:</label>
+        <input type='text' name='seventhPrize' placeholder='<?php echo $seventhPrize; ?>'>
+        <br>
+        <label for='forthPrize'>Eight Prize:</label>
+        <input type='text' name='eightPrize' placeholder='<?php echo $eightPrize; ?>'>
+        <br>
+        <label for='forthPrize'>Ninth Prize:</label>
+        <input type='text' name='ninthPrize' placeholder='<?php echo $ninthPrize; ?>'>
         <?php
     }
 
@@ -108,6 +136,12 @@ Class WireConnectorSettingOptions{
         register_setting('wire_connector_goals','ThirdGoal');
         register_setting('wire_connector_goals','FourthGoal');
 
+        register_setting('wire_connector_goals','FifthGoal');
+        register_setting('wire_connector_goals','SixthGoal');
+        register_setting('wire_connector_goals','SeventhGoal');
+        register_setting('wire_connector_goals','EightGoal');
+        register_setting('wire_connector_goals','NinthGoal');
+
         add_settings_section('wc_goals', 'Wire Connector Goals', array($this,'wc_goals_settings'), 'goal_wc_page');
 
     }
@@ -118,6 +152,12 @@ Class WireConnectorSettingOptions{
         $secondGoal = esc_attr(get_option('SecondGoal'));
         $thirdGoal = esc_attr(get_option('ThirdGoal'));
         $fourthGoal = esc_attr(get_option('FourthGoal'));
+
+        $fifthGoal = esc_attr(get_option('FifthGoal'));
+        $sixthGoal = esc_attr(get_option('SixthGoal'));
+        $seventhGoal = esc_attr(get_option('SeventhGoal'));
+        $eightGoal = esc_attr(get_option('EightGoal'));
+        $ninthGoal = esc_attr(get_option('NinthGoal'));
 
         ?>
         <label for='firstGoal'>First Goal:</label>
@@ -131,6 +171,21 @@ Class WireConnectorSettingOptions{
         <br>
         <label for='forthGoal'>Fourth Goal:</label>
         <input type='text' name='fourthGoal' placeholder='<?php echo $fourthGoal; ?>'>
+        <br>
+        <label for='forthGoal'>Fifth Goal:</label>
+        <input type='text' name='fifthGoal' placeholder='<?php echo $fifthGoal; ?>'>
+        <br>
+        <label for='forthGoal'>Sixth Goal:</label>
+        <input type='text' name='sixthGoal' placeholder='<?php echo $sixthGoal; ?>'>
+        <br>
+        <label for='forthGoal'>Seventh Goal:</label>
+        <input type='text' name='seventhGoal' placeholder='<?php echo $seventhGoal; ?>'>
+        <br>
+        <label for='forthGoal'>Eight Goal:</label>
+        <input type='text' name='eightGoal' placeholder='<?php echo $eightGoal; ?>'>
+        <br>
+        <label for='forthGoal'>Ninth Goal:</label>
+        <input type='text' name='ninthGoal' placeholder='<?php echo $ninthGoal; ?>'>
         <?php
 
     }

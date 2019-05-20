@@ -577,10 +577,21 @@ class WireConnector extends WireConnectorShareable {
         $secondGoal = get_option('SecondGoal');
         $thirdGoal = get_option('ThirdGoal');
         $fourthGoal = get_option('FourthGoal');
+        $fifthGoal = get_option('FifthGoal');
+        $sixthGoal = get_option('SixthGoal');
+        $seventhGoal = get_option('SeventhGoal');
+        $eightGoal = get_option('EightGoal');
+        $ninthGoal = get_option('NinthGoal');
+
         $firstPrize = get_option('FirstPrize');
         $secondPrize = get_option('SecondPrize');
         $thirdPrize = get_option('ThirdPrize');
         $fourthPrize = get_option('FourthPrize');
+        $fifthPrize = get_option('FifthPrize');
+        $sixthPrize = get_option('SixthPrize');
+        $seventhPrize = get_option('SeventhPrize');
+        $eightPrize = get_option('EightPrize');
+        $ninthPrize = get_option('NinthPrize');
 
         $mailchimp_api = static::mailchimp_methods();
         $listIDs = $mailchimp_api->getListID();
@@ -634,6 +645,11 @@ class WireConnector extends WireConnectorShareable {
             <p><span>2nd Goal: <?php echo $secondGoal; ?></span> - Prize: <?php echo $secondPrize; ?></p>
             <p><span>3rd Goal: <?php echo $thirdGoal; ?></span> - Prize: <?php echo $thirdPrize; ?></p>
             <p><span>4th Goal: <?php echo $fourthGoal; ?></span> - Prize: <?php echo $fourthPrize; ?></p>
+            <p><span>5th Goal: <?php echo $fifthGoal; ?></span> - Prize: <?php echo $fifthPrize; ?></p>
+            <p><span>6th Goal: <?php echo $sixthGoal; ?></span> - Prize: <?php echo $sixthPrize; ?></p>
+            <p><span>7th Goal: <?php echo $seventhGoal; ?></span> - Prize: <?php echo $seventhPrize; ?></p>
+            <p><span>8th Goal: <?php echo $eightGoal; ?></span> - Prize: <?php echo $eightPrize; ?></p>
+            <p><span>9th Goal: <?php echo $ninthGoal; ?></span> - Prize: <?php echo $ninthPrize; ?></p>
 
         </div>
 
