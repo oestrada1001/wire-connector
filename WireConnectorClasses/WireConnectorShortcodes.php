@@ -15,7 +15,13 @@ class WireConnectorShortcodes extends WireConnectorShareable {
         add_shortcode('subscriber_difference', array($this,'subscriber_difference_shortcode'));
         add_shortcode('subscriber_email', array($this,'subscriber_email_shortcode'));
         add_shortcode('merge_field', array($this,'merge_field_shortcode'));
+        add_shortcode('post_submit', array($this,'post_submit_shortcode'));
         add_shortcode('goal', array($this, 'goal_shortcode'));
+    }
+
+    public function post_submit_shortcode()
+    {
+        return admin_url('admin-post.php');
     }
 
     public function verify_subscriber($id, $list, $sub)
