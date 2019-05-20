@@ -59,8 +59,7 @@ abstract class WireConnectorShareable{
                       <input type=\"hidden\" name=\"id\" value=\"{$get['id']}\">
                       <input type=\"hidden\" name=\"sub\" value=\"{$get['sub']}\">
                       <input type=\"hidden\" name=\"list\" value=\"{$get['list']}\">
-                      <label for=\"email\">Email Address: </label>
-                      <input type=\"email\" name=\"email\" value=\"\">
+                      <input type=\"email\" name=\"email\" value=\"\" style=\"display:inline-block; width:50%;\" placeholder=\"Email Address\" required>
                       <input type=\"submit\" value=\"Submit\">
                     </form>";
                 return $refByForm;
@@ -71,8 +70,7 @@ abstract class WireConnectorShareable{
                       <input type=\"hidden\" name=\"action\" value=\"submit-form\">
                       <input type=\"hidden\" name=\"type\" value=\"regular\">
                       <input type=\"hidden\" name=\"list\" value=\"{$get}\">
-                      <label for=\"email\">Email Address: </label>
-                      <input type=\"email\" name=\"email\" value=\"\">
+                      <input type=\"email\" name=\"email\" value=\"\" style=\"display:inline-block; width:50%;\" placeholder=\"Email Address\" required>
                       <input type=\"submit\" value=\"Submit\">
                     </form>";
                 return $regularSub;
