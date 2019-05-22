@@ -629,7 +629,7 @@ class MailChimp
 				    'name' => 'User ID',
 				    'type' => 'number',
 				    'tag' => 'USERID',
-				    'default_value' => '1001'
+				    'default_value' => '0'
 			    ];
 
 			    return $data;
@@ -640,7 +640,7 @@ class MailChimp
 				    'name' => 'Referred By',
 				    'type' => 'number',
 				    'tag' => 'REFBY',
-				    'default_value' => '1001'
+				    'default_value' => '0'
 			    ];
 
 			    return $data;
@@ -651,7 +651,7 @@ class MailChimp
 				    'name' => 'Referred',
 				    'type' => 'number',
 				    'tag' => 'REFD',
-				    'default_value' => '1001'
+				    'default_value' => '0'
 			    ];
 
 			    return $data;
@@ -673,7 +673,7 @@ class MailChimp
 		    	    'name' => 'Profile Link',
 				    'type' => 'text',
 				    'tag' => 'PLINK',
-				    'default' => '1001'
+				    'default' => '0'
 			    ];
 
 		    	return $data;
@@ -683,7 +683,7 @@ class MailChimp
 		    		'name' => 'Referral Link',
 				    'type' => 'text',
 				    'tag' => 'RLINK',
-				    'default' => '1001'
+				    'default' => '0'
 			    ];
 
 		    	return $data;
@@ -749,6 +749,8 @@ class MailChimp
 						$memberLinks = $this->createMemberLinks($pageLinks, $i,$value['id'], $listID);
 
 						$this->updateMemberMergeField($membersUrlWithSubID,'USERID', $i );
+						$this->updateMemberMergeField($membersUrlWithSubID,'REFBY', 0 );
+						$this->updateMemberMergeField($membersUrlWithSubID,'REFD', 0 );
 						$this->updateMemberMergeField($membersUrlWithSubID, 'PLINK', $memberLinks['Profile Link']);
 						$this->updateMemberMergeField($membersUrlWithSubID, 'RLINK', $memberLinks['Referral Link']);
 
