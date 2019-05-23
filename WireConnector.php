@@ -50,12 +50,18 @@ class WireConnector extends WireConnectorShareable {
         add_action('admin_enqueue_scripts', array($this, 'add_scripts'));
         add_action('admin_post_nopriv_submit-form', 'public_form_action'); // If the user in not logged in
         add_action('admin_post_submit-form', 'private_form_action'); // If the user is logged in
+        add_filter( 'wp_mail_content_type', array($this, 'wpdocs_set_html_mail_content_type' ));
         add_filter('wp_kses_allowed_html', function ($allowedposttags, $context){
             if($context == 'post'){
                 $allowedposttags['input']['value'] = 1;
             }
             return $allowedposttags;
         }, 10,2);
+    }
+
+    public function wpdocs_set_html_mail_content_type()
+    {
+        return 'text/html';
     }
 
     public function retrieve_client_link()
@@ -258,7 +264,23 @@ class WireConnector extends WireConnectorShareable {
 
         $this->create_and_apply_new_member_links($pageLinks, $latestID, $newMemberHash, $postArray['list']);
 
-        $this->retrieve_redirect_client_link($newMemberHash, $latestID, $postArray['list']);
+        $this->retrieve_redirect_client_link($newMemberHash, $latestID, $postArray['list'], $postArray['email']);
+    }
+
+    //send email to new subscriber
+    private function new_subscriber_email($email, $profile_link)
+    {
+        $subscriber_email = sanitize_email($email);
+
+        $WC_Mail = new WireConnectorMail();
+
+
+        $to = $subscriber_email;
+        $subject = 'Welcome to'. $WC_Mail->get_website_name();
+        $body = $WC_Mail->new_subscriber_template($subscriber_email, $profile_link);
+
+        wp_mail($to, $subject, $body);
+
     }
 
     private function create_and_apply_new_member_links($pageLinks, $latestID, $newMemberHash, $listID)
@@ -485,11 +507,13 @@ class WireConnector extends WireConnectorShareable {
 
     }
 
-    private function retrieve_redirect_client_link($subID, $userID, $listID)
+    private function retrieve_redirect_client_link($subID, $userID, $listID, $subscriber_email = null)
     {
         $pageLink = $this->retrieve_page_link();
 
         $clientRedirectPageLink = $pageLink.'?id='.$userID.'&list='.$listID.'&sub='.$subID;
+
+        $this->new_subscriber_email($subscriber_email, $clientRedirectPageLink);
 
         wp_redirect($clientRedirectPageLink);
 
