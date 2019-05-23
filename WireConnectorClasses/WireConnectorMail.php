@@ -354,7 +354,7 @@ Class WireConnectorMail{
 <!--<![endif]-->
 <div align=\"center\" class=\"img-container center autowidth fullwidth\" style=\"padding-right: 0px;padding-left: 0px;\">
 <!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr style=\"line-height:0px\"><td style=\"padding-right: 0px;padding-left: 0px;\" align=\"center\"><![endif]-->
-<div style=\"font-size:1px;line-height:25px\"> </div><img align=\"center\" alt=\"Image\" border=\"0\" class=\"center autowidth fullwidth\" src=\"images/rounder-up.png\" style=\"outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; clear: both; border: 0; height: auto; float: none; width: 100%; max-width: 600px; display: block;\" title=\"Image\" width=\"600\"/>
+<div style=\"font-size:1px;line-height:25px\"> </div>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <!--[if (!mso)&(!IE)]><!-->
@@ -378,7 +378,7 @@ Class WireConnectorMail{
 <div style=\"border-top:0px solid transparent; border-left:0px solid transparent; border-bottom:0px solid transparent; border-right:0px solid transparent; padding-top:5px; padding-bottom:5px; padding-right: 0px; padding-left: 0px;\">
 <!--<![endif]-->
 <div align=\"center\" class=\"img-container center autowidth\" style=\"padding-right: 0px;padding-left: 0px;\">
-<!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr style=\"line-height:0px\"><td style=\"padding-right: 0px;padding-left: 0px;\" align=\"center\"><![endif]--><img align=\"center\" alt=\"Image\" border=\"0\" class=\"center autowidth\" src=\"https://www.theimagingwire.com/wp-content/uploads/2018/05/18_IL_TheImagingWire_Logo_FNL.png\" style=\"outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; clear: both; border: 0; height: auto; float: none; width: 100%; max-width: 250px; display: block;\" title=\"Image\" width=\"250\"/>
+<!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr style=\"line-height:0px\"><td style=\"padding-right: 0px;padding-left: 0px;\" align=\"center\"><![endif]--><img align=\"center\" border=\"0\" class=\"center autowidth\" src=\"https://www.theimagingwire.com/wp-content/uploads/2018/05/18_IL_TheImagingWire_Logo_FNL.png\" style=\"outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; clear: both; border: 0; height: auto; float: none; width: 100%; max-width: 250px; display: block;\" title=\"The Imaging Wire\" width=\"250\"/>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <!--[if (!mso)&(!IE)]><!-->
@@ -409,7 +409,7 @@ Class WireConnectorMail{
 </div>
 <!--[if mso]></td></tr></table><![endif]-->
 <div align=\"center\" class=\"img-container center autowidth\">
-<!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr style=\"line-height:0px\"><td style=\"\" align=\"center\"><![endif]--><img align=\"center\" alt=\"Image\" border=\"0\" class=\"center autowidth\" src=\"images/divider.png\" style=\"outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; clear: both; border: 0; height: auto; float: none; width: 100%; max-width: 316px; display: block;\" title=\"Image\" width=\"316\"/>
+<!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr style=\"line-height:0px\"><td style=\"\" align=\"center\"><![endif]-->
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <!--[if mso]><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td style=\"padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: 'Trebuchet MS', Tahoma, sans-serif\"><![endif]-->
