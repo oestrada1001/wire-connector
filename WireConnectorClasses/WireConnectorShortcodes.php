@@ -10,6 +10,7 @@ class WireConnectorShortcodes extends WireConnectorShareable {
         //merge_field takes the merge field name as a parameter
         //Example [merge_field name='REFD']
         add_shortcode('subscription_form', array($this,'subscription_form_shortcode'));
+        add_shortcode('form_status', array($this, 'subscription_from_hidden_attribute_shortcode'));
         add_shortcode('subscriber_default_details', array($this,'subscriber_default_shortcode'));
         add_shortcode('subscriber_percentage', array($this,'subscriber_percentage_shortcode'));
         add_shortcode('subscriber_difference', array($this,'subscriber_difference_shortcode'));
@@ -147,6 +148,64 @@ class WireConnectorShortcodes extends WireConnectorShareable {
             return $this->form_style($admin_url,'regular', $force_list);
         }
 
+    }
+
+    public function subscription_from_hidden_attribute_shortcode()
+    {
+        $get = array('id' => get_query_var('id'),
+            'sub' => get_query_var('sub'),
+            'list' => get_query_var('list')
+        );
+
+
+        $admin_url = $this->admin_url();
+        $force_list = get_option('ListID');
+
+
+        if(empty($get['id']) && !empty($get['sub']) && !empty($get['list'])){
+            $mailchimp_api= WireConnector::mailchimp_methods();
+
+            $list_verification = $mailchimp_api->get('lists/'.$get['list']);
+
+            if($list_verification['status'] == 404){
+                $regular_hidden_attributes = "
+                      <input type=\"hidden\" name=\"action\" value=\"submit-form\">
+                      <input type=\"hidden\" name=\"type\" value=\"regular\">
+                      <input type=\"hidden\" name=\"list\" value=\"{$force_list}\">";
+
+                return $regular_hidden_attributes;
+            }
+
+            $member_verification = $mailchimp_api->get('lists/'.$get['list'].'/members/'.$get['sub']);
+
+            if($member_verification['status'] == 404){
+                $regular_hidden_attributes = "
+                      <input type=\"hidden\" name=\"action\" value=\"submit-form\">
+                      <input type=\"hidden\" name=\"type\" value=\"regular\">
+                      <input type=\"hidden\" name=\"list\" value=\"{$force_list}\">";
+
+                return $regular_hidden_attributes;
+            }
+        }
+
+        if(!empty($get['id']) && !empty($get['sub']) && !empty($get['list'])){
+            return '';
+        }elseif(empty($get['id']) && !empty($get['sub']) && !empty($get['list'])){
+            $referred_hidden_attributes = "
+                      <input type=\"hidden\" name=\"action\" value=\"submit-form\">
+                      <input type=\"hidden\" name=\"type\" value=\"referred\">
+                      <input type=\"hidden\" name=\"id\" value=\"{$get['id']}\">
+                      <input type=\"hidden\" name=\"sub\" value=\"{$get['sub']}\">
+                      <input type=\"hidden\" name=\"list\" value=\"{$get['list']}\">";
+            return $referred_hidden_attributes;
+        }else{
+            $regular_hidden_attributes = "
+                      <input type=\"hidden\" name=\"action\" value=\"submit-form\">
+                      <input type=\"hidden\" name=\"type\" value=\"regular\">
+                      <input type=\"hidden\" name=\"list\" value=\"{$force_list}\">";
+
+            return $regular_hidden_attributes;
+        }
 
     }
 
