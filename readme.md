@@ -51,11 +51,11 @@ function private_form_action()
 
 ### Screenshots
 1. Configuring the Mailchimp Settings
-![Mailchimp Settings](../wire-connector/screenshots/mailchimp_settings.png)
+![Mailchimp Settings](screenshots/mailchimp_settings.png)
 2. Adding the wrappers to the functions.php file
-![Including wrappers in functions.php](../wire-connector/screenshots/functions.png)
+![Including wrappers in functions.php](screenshots/functions.png)
 3. Starting Wire Connector
-![Start Wire Connector](../wire-connector/screenshots/start_wire_connector.png)
+![Start Wire Connector](screenshots/start_wire_connector.png)
 
 #### Changelog
 
