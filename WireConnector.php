@@ -316,6 +316,11 @@ class WireConnector extends WireConnectorShareable {
         $secondGoal = get_option('SecondGoal');
         $thirdGoal = get_option('ThirdGoal');
         $fourthGoal = get_option('FourthGoal');
+        $fifthGoal = get_option('FifthGoal');
+        $sixthGoal = get_option('SixthGoal');
+        $seventhGoal = get_option('SeventhGoal');
+        $eightGoal = get_option('EightGoal');
+        $ninthGoal = get_option('NinthGoal');
 
         if($subscriber_score < $firstGoal){
 
@@ -337,6 +342,30 @@ class WireConnector extends WireConnectorShareable {
 
             $this->refd_by_incrementor($subscriber_link, 'REFD', $subscriber_score, $fourthGoal);
 
+        }elseif($subscriber_score > $fifthGoal){
+
+            $this->refd_by_incrementor($subscriber_link, 'REFD', $subscriber_score, $fifthGoal);
+
+        }elseif($subscriber_score > $sixthGoal){
+
+            $this->refd_by_incrementor($subscriber_link, 'REFD', $subscriber_score, $sixthGoal);
+
+        }elseif($subscriber_score > $seventhGoal){
+
+            $this->refd_by_incrementor($subscriber_link, 'REFD', $subscriber_score, $seventhGoal);
+
+        }elseif($subscriber_score > $eightGoal){
+
+            $this->refd_by_incrementor($subscriber_link, 'REFD', $subscriber_score, $eightGoal);
+
+        }elseif($subscriber_score > $ninthGoal){
+
+            $this->refd_by_incrementor($subscriber_link, 'REFD', $subscriber_score, $ninthGoal);
+
+        }else{
+
+            $this->refd_by_incrementor($subscriber_link, 'REFD', $subscriber_score, '0');
+
         }
 
     }
@@ -351,11 +380,12 @@ class WireConnector extends WireConnectorShareable {
         if($subscriber_refd == $goalSet){
 
             //$subscriberEmail = $mailchimp_api->retrieveMemberData($subscriberLink, 'email_address');
+            $to = 'jfishman@insight-links.com';
+            $subject = 'User Reached A Goal';
+            $body = "Use this link to see the user that reach the first goal: $subscriberLink";
+            $headers = array('Content-Type: text/html; charset=UTF-8');
 
-            //Insert Mail Notification
-
-
-            echo 'Email Sent';
+            wp_mail( $to, $subject, $body, $headers );
         }
 
         $mailchimp_api->updateMemberMergeField($subscriberLink, $merge_field_name, $subscriber_refd);
