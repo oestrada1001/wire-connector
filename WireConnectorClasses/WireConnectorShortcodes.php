@@ -3,6 +3,8 @@
 class WireConnectorShortcodes extends WireConnectorShareable {
 
     private $subscriber_information;
+    private $member_verification = null;
+    private $list_verification = null;
 
     public function __construct()
     {
@@ -134,9 +136,11 @@ class WireConnectorShortcodes extends WireConnectorShareable {
         if(empty($get['id']) && !empty($get['sub']) && !empty($get['list'])){
             $mailchimp_api= WireConnector::mailchimp_methods();
 
-            $list_verification = $mailchimp_api->get('lists/'.$get['list']);
+            if(is_null($this->list_verification)){
+                $this->list_verification = $mailchimp_api->get('lists/'.$get['list']);
+            }
 
-            if($list_verification['status'] == 404){
+            if($this->list_verification['status'] == 404){
                 $regular_hidden_attributes = "
                       <input type=\"hidden\" name=\"action\" value=\"submit-form\">
                       <input type=\"hidden\" name=\"type\" value=\"regular\">
@@ -145,9 +149,11 @@ class WireConnectorShortcodes extends WireConnectorShareable {
                 return $regular_hidden_attributes;
             }
 
-            $member_verification = $mailchimp_api->get('lists/'.$get['list'].'/members/'.$get['sub']);
+            if(is_null($this->member_verification)){
+                $this->member_verification = $mailchimp_api->get('lists/'.$get['list'].'/members/'.$get['sub']);
+            }
 
-            if($member_verification['status'] == 404){
+            if($this->member_verification['status'] == 404){
                 $regular_hidden_attributes = "
                       <input type=\"hidden\" name=\"action\" value=\"submit-form\">
                       <input type=\"hidden\" name=\"type\" value=\"regular\">
