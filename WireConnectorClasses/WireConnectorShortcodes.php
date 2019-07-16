@@ -2,18 +2,15 @@
 
 class WireConnectorShortcodes extends WireConnectorShareable {
 
-    
+    private $subscriber_information;
+
     public function __construct()
     {
-
         //subscription_form
         //merge_field takes the merge field name as a parameter
         //Example [merge_field name='REFD']
         add_shortcode('subscription_form', array($this,'subscription_form_shortcode'));
         add_shortcode('form_status', array($this, 'subscription_from_hidden_attribute_shortcode'));
-        add_shortcode('subscriber_default_details', array($this,'subscriber_default_shortcode'));
-        add_shortcode('subscriber_percentage', array($this,'subscriber_percentage_shortcode'));
-        add_shortcode('subscriber_difference', array($this,'subscriber_difference_shortcode'));
         add_shortcode('subscriber_email', array($this,'subscriber_email_shortcode'));
         add_shortcode('merge_field', array($this,'merge_field_shortcode'));
         add_shortcode('post_submit', array($this,'post_submit_shortcode'));
@@ -30,25 +27,29 @@ class WireConnectorShortcodes extends WireConnectorShareable {
     {
         if(!current_user_can('edit_pages')){
 
-            $WireConnector = new WireConnector();
+            if (!is_array($this->subscriber_information)) {
+                $WireConnector = new WireConnector();
+                $mailchimp_api = WireConnector::mailchimp_methods();
+                $list_verification = $mailchimp_api->get('lists/'.$list);
 
-            $mailchimp_api = WireConnector::mailchimp_methods();
-            $list_verification = $mailchimp_api->get('lists/'.$list);
+                $userExist = $mailchimp_api->get('lists/'.$list.'/members/'.$sub);
 
-            $userExist = $mailchimp_api->get('lists/'.$list.'/members/'.$sub);
+                if($list_verification['id'] != $list || $userExist['status'] == 404){
 
-            if($list_verification['id'] != $list || $userExist['status'] == 404){
+                    $newSubscriber = $WireConnector->retrieve_client_link();
 
-                $newSubscriber = $WireConnector->retrieve_client_link();
+                    $this->wrong_area_redirect($newSubscriber);
 
-                $this->wrong_area_redirect($newSubscriber);
+                    die();
 
-                die();
+                    /*$referred_subscriber_link = $WireConnector->retrieve_client_link();
+                    $referred_subscriber_link = $referred_subscriber_link.'?list='.$list.'&sub='.$sub;
+                    $this->wrong_area_redirect($referred_subscriber_link);*/
+                }
 
-                /*$referred_subscriber_link = $WireConnector->retrieve_client_link();
-                $referred_subscriber_link = $referred_subscriber_link.'?list='.$list.'&sub='.$sub;
-                $this->wrong_area_redirect($referred_subscriber_link);*/
+                $this->subscriber_information = $userExist;
             }
+
 
         }
 
@@ -72,38 +73,6 @@ class WireConnectorShortcodes extends WireConnectorShareable {
 
     }
 
-
-
-    /**
-     * subscribers_default_details returns HTML code with the user's total amount of users he has referred
-     * and the total amount needed to win a prize. This shortcode is added to page by default. Remove this
-     * and use set_goal and subscriber_referred to customize the code.
-     *
-     *
-     * @return string   string: Returns HTML with the amount of subscribers the user has and the total amount set.
-     */
-    public function subscriber_default_shortcode()
-    {
-        $get = array('id' => get_query_var('id'),
-            'sub' => get_query_var('sub'),
-            'list' => get_query_var('list')
-        );
-
-        if(!empty($get)){
-            $this->verify_subscriber($get['id'], $get['list'], $get['sub']);
-        }
-
-        $mailchimp_api = WireConnector::mailchimp_methods();
-
-        if(!empty($get['sub']) && !empty($get['list'])){
-            $goal = $mailchimp_api->user_merge_field($get['list'], $get['sub'], 'REFD');
-            $total = $mailchimp_api->user_merge_field($get['list'], $get['sub'], 'TOTAL');
-
-            $html = "<p>Your Score: $total<br>The Goal: $goal</p>";
-            return $html;
-        }
-
-    }
 
     /**
      * Subscription Form decide which shortcode to submit depending on the parameters that are passed through the URL.
@@ -223,6 +192,10 @@ class WireConnectorShortcodes extends WireConnectorShareable {
 
         $mailchimp_api = WireConnector::mailchimp_methods();
 
+        if(is_array($this->subscriber_information)){
+            return $this->subscriber_information['email_address'];
+        }
+
         if(!empty($get['sub']) && !empty($get['list'])){
             $memberUrl = $mailchimp_api->membersUrlWithHash($get['list'], $get['sub']);
             return $mailchimp_api->retrieveMemberData($memberUrl, 'email_address');
@@ -244,6 +217,16 @@ class WireConnectorShortcodes extends WireConnectorShareable {
 
         $mailchimp_api = WireConnector::mailchimp_methods();
 
+        if(is_array($this->subscriber_information)){
+            $merge_field = shortcode_atts( array(
+                'name' => 'Please include merge field name.'
+            ), $attr);
+
+            $name = $merge_field['name'];
+
+            return $this->subscriber_information['merge_fields'][$name];
+        }
+
         if(!empty($get['sub']) && !empty($get['list'])){
             $memberUrl = $mailchimp_api->membersUrlWithHash($get['list'], $get['sub']);
             $merge_fields = $mailchimp_api->retrieveMemberData($memberUrl, 'merge_fields');
@@ -261,6 +244,7 @@ class WireConnectorShortcodes extends WireConnectorShareable {
 
     public function goal_shortcode( $attr = '')
     {
+
         $get = array('id' => get_query_var('id'),
             'sub' => get_query_var('sub'),
             'list' => get_query_var('list')
@@ -269,8 +253,6 @@ class WireConnectorShortcodes extends WireConnectorShareable {
         if(!empty($get)){
             $this->verify_subscriber($get['id'], $get['list'], $get['sub']);
         }
-
-        $mailchimp_api = WireConnector::mailchimp_methods();
 
         if(!empty($get['sub']) && !empty($get['list'])){
 
@@ -361,8 +343,6 @@ class WireConnectorShortcodes extends WireConnectorShareable {
             $this->verify_subscriber($get['id'], $get['list'], $get['sub']);
         }
 
-        $mailchimp_api = WireConnector::mailchimp_methods();
-
         if(!empty($get['sub']) && !empty($get['list'])){
 
             $prize = shortcode_atts( array(
@@ -439,55 +419,6 @@ class WireConnectorShortcodes extends WireConnectorShareable {
             return $number;
 
         }
-    }
-
-
-    public function subscriber_percentage_shortcode()
-    {
-        $get = array('id' => get_query_var('id'),
-            'sub' => get_query_var('sub'),
-            'list' => get_query_var('list')
-        );
-
-        if(!empty($get)){
-            $this->verify_subscriber($get['id'], $get['list'], $get['sub']);
-        }
-
-        $mailchimp_api = WireConnector::mailchimp_methods();
-
-        if(!empty($get['sub']) && !empty($get['list'])) {
-            $refd = $mailchimp_api->user_merge_field($get['list'], $get['sub'], 'REFD');
-            $total = $mailchimp_api->user_merge_field($get['list'], $get['sub'], 'TOTAL');
-
-            $percentage = ($refd / $total) * 100;
-
-            return floor($percentage);
-        }
-
-    }
-
-    public function subscriber_difference_shortcode()
-    {
-        $get = array('id' => get_query_var('id'),
-            'sub' => get_query_var('sub'),
-            'list' => get_query_var('list')
-        );
-
-        if(!empty($get)){
-            $this->verify_subscriber($get['id'], $get['list'], $get['sub']);
-        }
-
-        $mailchimp_api = WireConnector::mailchimp_methods();
-
-        if(!empty($get['sub']) && !empty($get['list'])) {
-            $refd = $mailchimp_api->user_merge_field($get['list'], $get['sub'], 'REFD');
-            $total = $mailchimp_api->user_merge_field($get['list'], $get['sub'], 'TOTAL');
-
-            $difference = $total - $refd;
-
-            return $difference;
-        }
-
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace DrewM\MailChimp;
+namespace includes\WC_MailChimp;
 
 /**
  * A MailChimp Batch operation.

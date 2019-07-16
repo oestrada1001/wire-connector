@@ -149,7 +149,7 @@ class WireConnector extends WireConnectorShareable {
         echo "<div class='wrap'>";
         $this->customize_pages();
         echo "<h1 style=\"text-align:center;\">Email Configuration</h1>";
-        echo "<p style=\"text-align:center;\">This is the email that will be notificed once the subscribers accomplish a goal.</p>";
+        echo "<p style=\"text-align:center;\">This is the email that will be notified once the subscribers accomplish a goal.</p>";
         echo "<form method='post' action='$admin_url'>";
         settings_fields('wire_connector_email');
         echo "<input type='hidden' name='action' value='submit-form'>";
@@ -200,6 +200,7 @@ class WireConnector extends WireConnectorShareable {
 
     }
 
+    //3
     private function referred_action_steps($post)
     {
         if($post['type'] == 'referred'){
@@ -228,17 +229,23 @@ class WireConnector extends WireConnectorShareable {
         }
     }
 
+    //2
     private function add_new_subscriber($postArray)
     {
 
         $mailchimp_api = static::mailchimp_methods();
         $memberUrl = $mailchimp_api->membersUrl($postArray['list']);
 
-        $latestSubscriberHash = $this->retrieve_last_member_id($postArray['list'], $memberUrl);
+        $latestID = $this->retrieve_last_member_id($memberUrl);
 
-        $latestID = $mailchimp_api->user_merge_field($postArray['list'], $latestSubscriberHash, 'USERID');
+        $newMemberHash = $mailchimp_api->subscriberHash($postArray['email']);
 
-        $latestID++;
+        $pageLink = $this->getPageUrl();
+        $clientPageLink = $this->getPageUrl('ClientPageID');
+        $pageLinks = array($pageLink, $clientPageLink);
+
+        $newSubscriberLinks = $this->mailchimp_api->createMemberLinks($pageLinks, $latestID, $newMemberHash, $postArray['list']);
+        $latestID = $latestID + 1;
 
         $data = array(
             'email_address' => sanitize_email($postArray['email']),
@@ -248,21 +255,12 @@ class WireConnector extends WireConnectorShareable {
                 'REFD' => 0,
                 'REFBY' => $postArray['refBy'],
                 'AWARDED' => 0,
+                'PLINK' => $newSubscriberLinks['Profile Link'],
+                'RLINK' => $newSubscriberLinks['Referral Link']
             )
         );
 
-
         $mailchimp_api->post($memberUrl, $data);
-
-        $newMemberHash = $this->retrieve_last_member_id($postArray['list'], $memberUrl);
-
-        $pageLink = $this->getPageUrl();
-        $clientPageLink = $this->getPageUrl('ClientPageID');
-
-        $pageLinks = array($pageLink, $clientPageLink);
-
-
-        $this->create_and_apply_new_member_links($pageLinks, $latestID, $newMemberHash, $postArray['list']);
 
         $this->retrieve_redirect_client_link($newMemberHash, $latestID, $postArray['list'], $postArray['email']);
     }
@@ -294,16 +292,14 @@ class WireConnector extends WireConnectorShareable {
 
     }
 
-    private function retrieve_last_member_id($list,$memberUrl)
+    private function retrieve_last_member_id($memberUrl)
     {
         $mailchimp_api = static::mailchimp_methods();
         $memberArray = $mailchimp_api->get($memberUrl);
 
-        $oldMemberPosition = count($memberArray['members']) - 1;
+        $latestID = $memberArray['total_items'];
 
-        $latestSubscriberHash = $memberArray['members'][$oldMemberPosition]['id'];
-
-        return $latestSubscriberHash;
+        return $latestID;
     }
 
     private function check_subscriber_referred_score($list, $subscriberHash)
@@ -379,10 +375,10 @@ class WireConnector extends WireConnectorShareable {
 
         if($subscriber_refd == $goalSet){
 
-            //$subscriberEmail = $mailchimp_api->retrieveMemberData($subscriberLink, 'email_address');
-            $to = 'jfishman@insight-links.com';
+            $adminEmail = get_option('AdminEmail');
+            $to = $adminEmail;
             $subject = 'User Reached A Goal';
-            $body = "Use this link to see the user that reach the first goal: $subscriberLink";
+            $body = "Use this link to see the user that reach their goal: $subscriberLink";
             $headers = array('Content-Type: text/html; charset=UTF-8');
 
             wp_mail( $to, $subject, $body, $headers );
@@ -704,6 +700,32 @@ class WireConnector extends WireConnectorShareable {
             <p><span>7th Goal: <?php echo $seventhGoal; ?></span> - Prize: <?php echo $seventhPrize; ?></p>
             <p><span>8th Goal: <?php echo $eightGoal; ?></span> - Prize: <?php echo $eightPrize; ?></p>
             <p><span>9th Goal: <?php echo $ninthGoal; ?></span> - Prize: <?php echo $ninthPrize; ?></p>
+
+            <?php
+            $batch = $mailchimp_api->new_batch();
+            $batch_information = $batch->check_status();
+            $last_batch = count($batch_information);
+            ?>
+            <h1>Merge Field Columns Update Log:</h1>
+            <p><span>Email list update status:</span> <?php echo $batch_information['batches'][$last_batch]['status']; ?></p>
+            <?php
+            $last_response = $mailchimp_api->getLastResponse();
+            $last_response = json_decode($last_response['body']);
+            foreach ($last_response as $response_array => $response) {
+                foreach($response as $index => $value){
+                    if(is_null($value->rel)){
+                        echo "ID: ".$value->id."<br>";
+                        echo "Status: ".$value->status."<br>";
+                        echo "Total Operations: ".$value->total_operations."<br>";
+                        echo "Finished Operations: ".$value->finished_operations."<br>";
+                        echo "Errored Operations: ".$value->errored_operations."<br>";
+                        echo "Submitted At: ".$value->submitted_at."<br>";
+                        echo "Completed At: ".$value->completed_at."<br><br>";
+                    }
+                }
+            }
+
+            ?>
 
         </div>
 

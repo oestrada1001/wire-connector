@@ -2,6 +2,8 @@
 
 namespace includes\WC_MailChimp;
 
+include 'Batch.php';
+
 /**
  * Super-simple, minimum abstraction MailChimp API v3 wrapper
  * MailChimp API v3: http://developer.mailchimp.com
@@ -17,6 +19,9 @@ class MailChimp
     private $api_endpoint;
 
     protected $wpChimpFramework;
+
+    protected $list;
+    protected $merge_field_data;
 
     const TIMEOUT = 10;
 
@@ -725,46 +730,64 @@ class MailChimp
 	 */
 	public function initiateUniqueIdentifiers($pageLinks, $listID)
 	{
-		$membersUrl = $this->membersUrl($listID);
 
-		$members = $this->get($membersUrl);
+		$members = $this->retrieve_audience_information_from_file();
 
-		foreach($members as $member){
+        $batch = $this->new_batch();
 
-			if (is_array($member) || is_object($member)) {
+		foreach($members as $member => $member_hash){
 
-				foreach ( $member as $key => $value ) {
+            if ( ! isset( $i ) ) {
+                $i = 1;
+            } else {
+                $i ++;
+            }
 
-					if ( ! isset( $i ) ) {
-						$i = 1;
-					} else {
-						$i ++;
-					}
+            if($member == 'Email Address'){ continue; }
 
+		    $membersUrlWithSubID = $this->membersUrlWithHash($listID, $member_hash);
+		    $memberLinks = $this->createMemberLinks($pageLinks, $i,$member_hash, $listID);
+		    $this->addMergeFiledDataToMemberArray('USERID', $i );
+		    $this->addMergeFiledDataToMemberArray('REFBY', '0' );
+		    $this->addMergeFiledDataToMemberArray('REFD', '0' );
+		    $this->addMergeFiledDataToMemberArray('AWARDED', '0' );
+		    $this->addMergeFiledDataToMemberArray( 'PLINK', $memberLinks['Profile Link']);
+		    $this->addMergeFiledDataToMemberArray('RLINK', $memberLinks['Referral Link']);
+		    $formatted_data = $this->format_merge_field_data();
 
-					if(!empty($value['id'])){
-
-						$membersUrlWithSubID = $this->membersUrlWithHash($listID, $value['id']);
-
-						$memberLinks = $this->createMemberLinks($pageLinks, $i,$value['id'], $listID);
-
-						$this->updateMemberMergeField($membersUrlWithSubID,'USERID', $i );
-						$this->updateMemberMergeField($membersUrlWithSubID,'REFBY', 0 );
-						$this->updateMemberMergeField($membersUrlWithSubID,'REFD', 0 );
-						$this->updateMemberMergeField($membersUrlWithSubID, 'PLINK', $memberLinks['Profile Link']);
-						$this->updateMemberMergeField($membersUrlWithSubID, 'RLINK', $memberLinks['Referral Link']);
-
-
-
-					}
-
-				}
-
-			}
+		    $batch->patch((string)$i, $membersUrlWithSubID, $formatted_data);
 
 		}
+        $batch->execute();
 
-	}
+    }
+
+	public function retrieve_audience_information_from_file()
+    {
+        $filename = __DIR__ . '/mailchimp_list.csv';
+
+        $members_array = array();
+        $handle = fopen($filename, 'r');
+        while(($content = fgetcsv($handle)) !== FALSE){
+            if($content[0]){
+                $subscriber_hash = $this->subscriberHash($content[0]);
+                $members_array[$content[0]] = $subscriber_hash;
+            }
+
+        }
+        fclose($handle);
+
+        return (array)$members_array;
+    }
+
+    public function updateMemberMergeField($membersUrlWithSubID, $mergeFieldName, $mergeFieldValue)
+    {
+        $data = array(
+            'merge_fields' =>
+                array($mergeFieldName => $mergeFieldValue)
+        );
+        $this->patch($membersUrlWithSubID, $data);
+    }
 
 	/**
 	 * Retrieves a subscriber's merge field value. Recommended for integers.
@@ -792,15 +815,20 @@ class MailChimp
 
 	}
 
-	public function updateMemberMergeField($membersUrlWithSubID, $mergeFieldName, $mergeFieldValue)
+	public function format_merge_field_data()
 	{
-		$data = array(
-			'merge_fields' =>
-				array($mergeFieldName => $mergeFieldValue)
-		);
+        $formatted_data = array(
+            'merge_fields' =>
+                $this->merge_field_data
+        );
 
-		$this->patch($membersUrlWithSubID, $data);
+        return $formatted_data;
 	}
+
+	public function addMergeFiledDataToMemberArray($mergeFieldName, $mergeFieldValue)
+    {
+        $this->merge_field_data[$mergeFieldName] = $mergeFieldValue;
+    }
 
 	public function retrieveMemberData($memberUrlWithSubID, $firstLevelValue = null, $secondLevelValue = null, $thirdLevelValue = null)
 	{
