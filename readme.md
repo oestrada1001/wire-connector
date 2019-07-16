@@ -63,6 +63,10 @@ function private_form_action()
 
 2/14/2019 - Initial Upload
 
-= 1.1 =
+= 1.0.1 =
 
 6/11/2019 - Separated concerns with classes and implemented Mail, Mailchimp Lists, and Goals and Prizes Settings.
+
+= 1.0.2 =
+
+7/15/2019 - Wire Connector can now do handle big list. It is highly recommenced to use your latest subscriber list. The list must be placed within the includes directory and named 'mailchimp_list.csv'(case sensitive).
